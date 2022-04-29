@@ -18,7 +18,8 @@ class _AddressFormState extends State<AddressForm> {
   @override
   void initState() {
     super.initState();
-    _addressController = TextEditingController();
+    _addressController =
+        TextEditingController(text: widget.currentAddress ?? '');
   }
 
   @override

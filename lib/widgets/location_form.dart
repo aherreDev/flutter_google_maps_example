@@ -7,10 +7,16 @@ import '../utils/gps_utils.dart';
 import 'lat_lng_form.dart';
 
 class LocationForm extends StatefulWidget {
-  const LocationForm({Key? key, required this.handleNewMarker})
+  const LocationForm(
+      {Key? key,
+      required this.handleNewMarker,
+      this.currentLocation,
+      this.currentAddress})
       : super(key: key);
 
   final Function handleNewMarker;
+  final LatLng? currentLocation;
+  final String? currentAddress;
 
   @override
   State<LocationForm> createState() => _LocationFormState();
@@ -38,18 +44,24 @@ class _LocationFormState extends State<LocationForm> {
               },
             ),
             currentIndex == 0
-                ? AddressContainer(handleNewMarker: widget.handleNewMarker)
-                : LatLngcontainer(handleNewMarker: widget.handleNewMarker),
+                ? AddressContainer(
+                    handleNewMarker: widget.handleNewMarker,
+                    currentLocation: widget.currentLocation)
+                : LatLngcontainer(
+                    handleNewMarker: widget.handleNewMarker,
+                    currentAddress: widget.currentAddress),
           ],
         ));
   }
 }
 
 class AddressContainer extends StatefulWidget {
-  const AddressContainer({Key? key, required this.handleNewMarker})
+  const AddressContainer(
+      {Key? key, required this.handleNewMarker, this.currentLocation})
       : super(key: key);
 
   final Function handleNewMarker;
+  final LatLng? currentLocation;
 
   @override
   State<AddressContainer> createState() => _AddressContainerState();
@@ -64,6 +76,7 @@ class _AddressContainerState extends State<AddressContainer> {
       children: [
         LatLngForm(
           onSearch: _onSearch,
+          currentLocation: widget.currentLocation,
         ),
         Text('Address found: $newAddress')
       ],
@@ -94,10 +107,12 @@ class _AddressContainerState extends State<AddressContainer> {
 }
 
 class LatLngcontainer extends StatefulWidget {
-  const LatLngcontainer({Key? key, required this.handleNewMarker})
+  const LatLngcontainer(
+      {Key? key, required this.handleNewMarker, this.currentAddress})
       : super(key: key);
 
   final Function handleNewMarker;
+  final String? currentAddress;
 
   @override
   State<LatLngcontainer> createState() => _LatLngcontainerState();
@@ -110,9 +125,7 @@ class _LatLngcontainerState extends State<LatLngcontainer> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        AddressForm(
-          onSearch: _onSearch,
-        ),
+        AddressForm(onSearch: _onSearch, currentAddress: widget.currentAddress),
         Text(
           'Lat & Long found: ${newLatLng?.latitude.toString() ?? ''} , ${newLatLng?.longitude.toString()}',
         ),

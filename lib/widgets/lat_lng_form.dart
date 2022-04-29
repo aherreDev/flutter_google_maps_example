@@ -20,8 +20,10 @@ class _LatLngFormState extends State<LatLngForm> {
   @override
   void initState() {
     super.initState();
-    _latController = TextEditingController();
-    _longController = TextEditingController();
+    _latController = TextEditingController(
+        text: widget.currentLocation?.latitude.toString() ?? '');
+    _longController = TextEditingController(
+        text: widget.currentLocation?.longitude.toString() ?? '');
   }
 
   @override

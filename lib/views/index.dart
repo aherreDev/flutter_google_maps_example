@@ -15,9 +15,8 @@ class IndexView extends StatefulWidget {
 }
 
 class _IndexViewState extends State<IndexView> {
-  double long = 0.0;
-  double lat = 0.0;
-  String location = 'Index';
+  LatLng? location;
+  String address = '';
   List<LatLng> markers = [];
 
   MapController controller = MapController(
@@ -36,12 +35,7 @@ class _IndexViewState extends State<IndexView> {
       appBar: AppBar(
         title: const Text('Geo Hack'),
       ),
-      body: Column(
-        children: [
-          LocationForm(handleNewMarker: _saveNewMarker),
-          MapWidget(controller: controller, markers: markers),
-        ],
-      ),
+      body: indexBody(),
       floatingActionButton: FloatingActionButton(
         onPressed: _gotoDefault,
         tooltip: 'My Location',
@@ -50,26 +44,36 @@ class _IndexViewState extends State<IndexView> {
     );
   }
 
-  String _latLongStr() {
-    return '$lat, $long';
+  Column indexBody() {
+    return Column(
+      children: [
+        LocationForm(
+            handleNewMarker: _saveNewMarker,
+            currentLocation: location,
+            currentAddress: address),
+        MapWidget(controller: controller, markers: markers),
+      ],
+    );
   }
 
   void _loadCurrentLocation() async {
     Position currentPosition = await determinePosition();
-    lat = fetchLatitude(currentPosition);
-    long = fetchLongitude(currentPosition);
-    String currentAddress = await reverseGeocoding(lat, long);
-    controller.center = LatLng(lat, long);
+    double newLat = fetchLatitude(currentPosition);
+    double newLong = fetchLongitude(currentPosition);
+    String currentAddress = await reverseGeocoding(newLat, newLong);
+    LatLng currentLocation = LatLng(newLat, newLong);
+    controller.center = currentLocation;
 
     setState(() {
-      location = currentAddress;
+      location = currentLocation;
+      address = currentAddress;
     });
+
+    _saveNewMarker(LatLng(newLat, newLong));
   }
 
   void _gotoDefault() {
-    LatLng position = LatLng(lat, long);
-
-    _saveNewMarker(position);
+    _saveNewMarker(location!);
   }
 
   void _saveNewMarker(LatLng position) {
